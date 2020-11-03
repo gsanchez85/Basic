@@ -1,0 +1,174 @@
+Option Strict Off
+
+Public Class Form1
+
+    'GSC'
+    Dim lvl As Integer = 1
+    Dim vidas As Integer = 5
+    Dim i As Integer = 0
+    Dim obstaculos(50) As PictureBox : Dim o As Integer = 0
+
+    Private Sub MostrarNV() 'Muestra el número de vidas y de nivel
+
+        life.Text = "Vidas: " + CStr(vidas) : Nnivel.Text = "Nivel: " + CStr(lvl)
+
+    End Sub
+
+    Private Sub menosvida() 'Si choca con un objeto con un borde
+
+        If (i = 1) = True Then
+
+            i = 0
+            MsgBox("Has chocado, empieza de nuevo.")
+            Windows.Forms.Cursor.Show() 'Vuelve a mostrar el ratón para empezar de nuevo
+            inicio.Enabled = True
+
+            vidas -= 1
+
+            If (vidas = 0) = True Then 'Si la vida es igual a 0, pierdes, y se reinicia todas las variables
+
+                MsgBox("GAME OVER")
+                i = 0 'Inicio de partida inactivo
+                vidas = 5 : lvl = 1
+                MostrarNV() 'Llama a la función mostrar() para visualizar las vidas y el nivel
+                niveles() 'Llama a la funcion niveles, vease abajo...
+
+            End If
+
+            life.Text = "Vidas: " + CStr(vidas)
+
+        End If
+
+    End Sub
+
+    Private Sub niveles()
+
+        'Todos los bloques les quito la visibilidad antes de empezar, 
+        'esto sirve para cuando se reinicie el juego.
+
+        While (o < 7)
+            obstaculos(o).Visible = False
+            o = o + 1
+        End While
+
+        o = 0
+
+        If (lvl = 1) Then 'Por cada nivel se visualizará o no, un bloque u otro
+
+            lvl1.Visible = True
+
+        ElseIf (lvl = 2) Then
+
+            lvl1.Visible = False : lvl2.Visible = True
+
+        ElseIf (lvl = 3) Then
+
+            lvl2.Visible = False : lvl135.Visible = True : lvl235.Visible = True
+
+        ElseIf (lvl = 4) Then
+
+            lvl135.Visible = False : lvl235.Visible = False
+            lvl14.Visible = True : lvl24.Visible = True
+
+        ElseIf (lvl = 5) Then
+
+            lvl14.Visible = False : lvl24.Visible = False
+            lvl135.Visible = True : lvl235.Visible = True
+            lvl15.Visible = True : lvl25.Visible = True
+            lvl24.Visible = True
+
+        Else 'Cuando supere el nivel 5, has ganado y termina la partida
+           
+            If (vidas = 5 And lvl <= 6) Then 'nivel extra
+                lvl14.Visible = False : lvl24.Visible = False
+                lvl235.Visible = True : lvl15.Visible = True
+                lvl25.Visible = True : lvl24.Visible = True
+                lvl135.Visible = False : lvl1.Visible = True
+                Exit Sub
+            End If
+
+            MsgBox("Enorabuena, ¡has ganado!, puedes empezar de nuevo")
+
+            i = 0 'Se inactiva el juego
+            lvl = 1 'Vuelve al nivel 1
+            vidas = 5 'Vuelve a tener todas las vidas
+            niveles() 'Llama a la misma función para mostrar los bloques del nivel 1
+            MostrarNV() 'Muestra la vida y el nivel en la función
+
+        End If
+
+    End Sub
+
+    Private Sub inicio_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles inicio.Click
+
+        inicio.Enabled = False
+        Windows.Forms.Cursor.Hide() 'El cursor se oculta
+        i = 1 '1 quiere decir que se inica el juego, todas las condiciones de los eventos funcionarán si i es igual a 1
+
+    End Sub
+
+    Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+        MostrarNV() 'Muestra al cargar el formulario las vidas y el nivel
+
+        obstaculos(0) = lvl2 : obstaculos(1) = lvl14 : obstaculos(2) = lvl24
+        obstaculos(3) = lvl135 : obstaculos(4) = lvl235 : obstaculos(5) = lvl15
+        obstaculos(6) = lvl25
+
+    End Sub
+
+    Private Sub reboot_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles reboot.Click
+
+        'Reinicia todo
+        lvl = 1 : vidas = 5
+        MostrarNV() : niveles()
+
+    End Sub
+
+    Private Sub Fin_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles Fin.MouseEnter
+
+        If (i = 1) = True Then
+
+            i = 0
+            MsgBox("Has llegado al final, pasas al siguiente nivel.")
+            Windows.Forms.Cursor.Show() 'Muestra de nuevo el cursor
+            inicio.Enabled = True
+
+            lvl += 1 'Siguiente nivel
+            Nnivel.Text = "Nivel: " + CStr(lvl) 'Muestra el nivel
+            niveles()
+
+        End If
+
+    End Sub
+
+    Private Sub lvl1_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles lvl1.MouseEnter, lvl2.MouseEnter, lvl135.MouseEnter, lvl235.MouseEnter, lvl14.MouseEnter, lvl24.MouseEnter, lvl15.MouseEnter, lvl25.MouseEnter
+
+        menosvida() 'Cuando choca con algunos de estos objetos llama a la función menosvida()
+
+    End Sub
+
+    Private Sub Fin_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Fin.Click
+
+        MsgBox("Haz click en Inicio para iniciar el juego.")
+
+    End Sub
+
+    Private Sub salir_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles salir.Click
+
+        MsgBox("¡Hasta otra!")
+        End
+
+    End Sub
+
+    Private Sub bq1_MouseEnter(ByVal sender As Object, ByVal e As System.EventArgs) Handles bq1.MouseEnter, bq2.MouseEnter, bq3.MouseEnter, bq4.MouseEnter
+
+        'Si choca con los bordes grises también se penalizará si el juego está iniciado
+        If (i = 1) Then
+
+            menosvida()
+
+        End If
+
+    End Sub
+End Class
